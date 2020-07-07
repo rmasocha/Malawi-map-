@@ -79,12 +79,50 @@
       font-weight: normal;
     }
 
+    h6 {
+      padding: 0px;
+      font-size: 12px;
+      font-family: "Montserrat";
+    }
+
     /* Set map parameters */
     #map {
       position: fixed;
       bottom: 0px;
       width: 100%;
       top: 52px;
+    }
+
+    /* Set time slider styles */
+    #slider {
+      position: absolute;
+      height: 25px;
+      bottom: 20px;
+      left: 125px;
+      z-index: 1000;
+      background-color: #FFFFFF;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Set temporal legend styles */
+    #temporal {
+      position: absolute;
+      width: 100px;
+      height: 25px;
+      bottom: 20px;
+      background-color: #FFFFFF;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Set the styles for the text span in the temporal legend */
+    #temporal span {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      position: absolute;
+      bottom: 3px;
+      left: 15px;
     }
   </style> <!-- Escape the css code -->
 
@@ -98,6 +136,17 @@
 
   <!-- The map will go inside this div below -->
   <div id="map"></div>
+
+  <!-- ui slider -->
+  <div id='slider' class='leaflet-control'>
+    <!-- Use the first and last year of the time data as the min and max. Set the initial value as the first year. Set the steps at one year. -->
+    <input type='range' min="1920" max="1938" value="1920" step="1" class="slider" />
+  </div>
+
+  <!-- temporal legend -->
+  <div id='temporal' class='leaflet-control'>
+    <h6 class='txt-bold'><span></span></h6>
+  </div>
 
   <!-- Link to the js files -->
   <script src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
@@ -171,11 +220,11 @@
     // Load your data asynchronously
     d3.queue()
       .defer(d3.json, 'data/southern_africa_ethnicity_murdock_1959.geojson') // Provide the path to your data file
-      //.defer(d3.json, 'data/Your_File.geojson') // Add more files if needed
+      .defer(d3.json, 'data/Malawi_immigration_test.geojson') // Add more files if needed
       .await(drawMap); // Load the layers after the map loads
 
     // Provide instructions for drawing the map
-    function drawMap(err, data1) {
+    function drawMap(err, data1, data2) {
 
       var dataOne = L.geoJson(data1, { // Define the first data layer with a variable
 
@@ -225,7 +274,7 @@
                 color: '#3232FF',
                 weight: 3,
                 opacity: 0.75
-              }).bringToFront();
+              });
             },
 
             // Define what happens on mouseout
@@ -241,6 +290,79 @@
 
       }).addTo(map); // Add the first data layer to the map
 
+      var propEmigration = L.geoJson(data2, { // Define the first data layer with a variable
+
+        pointToLayer: function(feature, ll) {
+
+          //style the points as circle markers
+          return L.circleMarker(ll, {
+            weight: 1, // set the weight of the border
+            opacity: 1, // set the opacity of the border
+            fillOpacity: 0.5, // set the opacity of the fill color
+          })
+        }, //end pointToLayer
+
+        //restyle on mouseover, reset style on mouseout
+        onEachFeature: function(feature, layer) {
+
+          //define what happens on mouseover
+          layer.on("mouseover", function(e) {
+            layer.setStyle({
+              fillColor: '#e59866',
+            });
+          });
+
+          //define what happens on mouseout
+          layer.on("mouseout", function(e) {
+            layer.setStyle({
+              opacity: 1,
+              color: '#ba4a00',
+              fillColor: '#dc7633',
+            });
+          });
+
+        } //end onEachFeature
+
+      }); // End propEmmigration
+
+      var propImmigration = L.geoJson(data2, { // Define the first data layer with a variable
+
+        pointToLayer: function(feature, ll) {
+
+          //style the points as circle markers
+          return L.circleMarker(ll, {
+            weight: 1, // set the weight of the border
+            opacity: 1, // set the opacity of the border
+            fillOpacity: 0.5, // set the opacity of the fill color
+          })
+        }, //end pointToLayer
+
+        //restyle on mouseover, reset style on mouseout
+        onEachFeature: function(feature, layer) {
+
+          var props = layer.feature.properties;
+          console.log(props);
+
+          //define what happens on mouseover
+          layer.on("mouseover", function(e) {
+            layer.setStyle({
+              fillColor: '#aed6f1',
+            });
+          });
+
+          //define what happens on mouseout
+          layer.on("mouseout", function(e) {
+            layer.setStyle({
+              opacity: 1,
+              color: '#2e86c1',
+              fillColor: '#5dade2',
+            });
+          });
+
+        } //end onEachFeature
+
+      }); // End propImmigration
+
       // Fit the map to the extent of the first data layer upon drawing
       //map.fitBounds(dataOne.getBounds());
 
@@ -248,6 +370,8 @@
       var overlays = {
         "Political Map, 1922": base1922,
         "Ethnic Groups, 1959": dataOne,
+        "Proportional Emigration": propEmigration,
+        "Proportional Immigration": propImmigration
       };
 
       // Send the layers to the layer control
@@ -255,7 +379,141 @@
         collapsed: false,
       }).addTo(map);
 
+      // Define the current year selected by the slider
+      var currentYear = $('.slider').val();
+
+      createTemporalLegend(currentYear); // Produces temporal legend upon map loading
+      sequenceUI(propEmigration, propImmigration); // Produces the time slider and sends the layers to it
+      updateCircles(propEmigration, propImmigration, currentYear); // Updates the layers according to the year selected by the slider
+
     }; //end drawMap function
+
+    // Add a temporal legend in sync with the UI slider
+    function createTemporalLegend(currentYear) { // THE FIRST TEMPORAL LEGEND
+
+      var temporalLegend = L.control({
+        position: 'bottomleft' // place the temporal legend at bottom left corner
+      });
+
+      // when added to the map
+      temporalLegend.onAdd = function(map) {
+
+        var div = L.DomUtil.get("temporal"); // get the style settings
+
+        // disable the mouse events
+        L.DomEvent.addListener(div, 'mousedown', function(e) {
+          L.DomEvent.stopPropagation(e);
+        });
+
+        return div; // return the style settings
+
+      }
+
+      $('#temporal span').html("Year: " + currentYear); // change grade value to that currently selected by UI slider
+
+      temporalLegend.addTo(map); // add the temporal legend to the map
+
+    }; // End createTemporalLegend function
+
+    // add a UI slider
+    function sequenceUI(propEmigration, propImmigration) { // THE FIRST UI SLIDER
+
+      // create Leaflet control for the slider
+      var sliderControl = L.control({
+        position: 'bottomleft',
+        follow: true
+      });
+
+      // add controls to the slider
+      sliderControl.onAdd = function(map) {
+
+        var controls = L.DomUtil.get("slider"); // get the style settings
+
+        // disable the mouse events and map dragging on mousedown
+        L.DomEvent.addListener(controls, 'mousedown', function(e) {
+          L.DomEvent.stopPropagation(e);
+          map.dragging.disable();
+        });
+
+        // re-enable map dragging on mouseout
+        L.DomEvent.addListener(slider, "mouseout", function(e) {
+          map.dragging.enable();
+        });
+
+        return controls; // return the style settings
+
+      }
+
+      // add the control to the map
+      sliderControl.addTo(map);
+
+      $('.slider')
+        .on('input change', function() {
+          var currentYear = $(this).val(); // identifies the year selected
+          createTemporalLegend(currentYear);
+          updateCircles(propEmigration, propImmigration, currentYear);
+        });
+
+    }; // End sequenceUI function
+
+    // calculate circle radii
+    function calcRadius(val) {
+      var radius = Math.sqrt(val / Math.PI);
+      return radius * 1.25; // adjust 16 as a scale factor
+    }; // end calcRadius() function
+
+    // Define updateCircles function
+    function updateCircles(propEmigration, propImmigration, currentYear) {
+
+      // change the layer based on the year-dependent data
+      propEmigration.eachLayer(function(layer) {
+
+        var props = layer.feature.properties; // Define a properties variable called props
+
+        var radius = calcRadius(Number(props['emigrants_' + currentYear]));
+        layer.setRadius(radius);
+        if (radius > 0) {
+          layer.setStyle({
+            opacity: 1,
+            color: '#ba4a00',
+            fillColor: '#dc7633',
+          })
+        };
+
+        //bind a popup window to each circle marker
+        layer.bindPopup("<h3>" + props.country + "</h3>" +
+          "<h4>Number of Emigrants: " + props['emigrants_' + currentYear] + "</h4>"
+        );
+
+      });
+
+      propEmigration.addTo(map);
+
+      // change the layer based on the year-dependent data
+      propImmigration.eachLayer(function(layer) {
+
+        var props = layer.feature.properties; // Define a properties variable called props
+
+        var radius = calcRadius(Number(props['immigrants_' + currentYear]));
+        layer.setRadius(radius);
+        if (radius > 0) {
+          layer.setStyle({
+            opacity: 1,
+            color: '#2e86c1',
+            fillColor: '#5dade2',
+          })
+        };
+
+        //bind a popup window to each circle marker
+        layer.bindPopup("<h3>" + props.country + "</h3>" +
+          "<h4>Number of Immigrants: " + props['immigrants_' + currentYear] + "</h4>"
+        );
+
+      });
+
+      propImmigration.addTo(map);
+
+    }; // End updateCircles function
   </script>
 </body>
 

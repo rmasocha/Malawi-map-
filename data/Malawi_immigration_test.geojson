@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "Malawi_immigration_test",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "country": "Malawi", "immigrants_1920": 3533, "emigrants_1920": 6099, "immigrants_1921": 3533, "emigrants_1921": 6099, "immigrants_1922": 3533, "emigrants_1922": 6099, "immigrants_1923": 3533, "emigrants_1923": 6099, "immigrants_1924": 3533, "emigrants_1924": 6099, "immigrants_1925": 3533, "emigrants_1925": 6099, "immigrants_1926": 3533, "emigrants_1926": 6099, "immigrants_1927": 3533, "emigrants_1927": 6099, "immigrants_1928": 3533, "emigrants_1928": 6099, "immigrants_1929": 3533, "emigrants_1929": 6099, "immigrants_1930": 3785, "emigrants_1930": 3485, "immigrants_1931": 3785, "emigrants_1931": 3485, "immigrants_1932": 3785, "emigrants_1932": 3485, "immigrants_1933": 3785, "emigrants_1933": 3485, "immigrants_1934": 11029, "emigrants_1934": 11614, "immigrants_1935": 11029, "emigrants_1935": 11614, "immigrants_1936": 11029, "emigrants_1936": 11614, "immigrants_1937": 12962, "emigrants_1937": 13022, "immigrants_1938": 12800, "emigrants_1938": 12320, "malawi_lat": -13.5, "malawi_lng": 34, "zimbabwe_lat": -20, "zimbabwe_lng": 30 }, "geometry": { "type": "Point", "coordinates": [ 34.0, -13.5 ] } }
+]
+}
