@@ -9,6 +9,12 @@
   <link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
+  <!--for icon support-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/v4-shims.css">
+  <!-- for icon markers -->
+  <link rel="stylesheet" href="css/leaflet.extra-markers.min.css">
 
   <style>
     h1 {
@@ -50,7 +56,8 @@
     }
 
     #scroll {
-      background-image: url(images/fresh_snow.png); /* add subtle pattern to background from (https://www.toptal.com/designers/subtlepatterns/fresh-snow/) */
+      background-image: url(images/fresh_snow.png);
+      /* add subtle pattern to background from (https://www.toptal.com/designers/subtlepatterns/fresh-snow/) */
     }
 
     /* Set time slider styles */
@@ -154,7 +161,7 @@
         <h2 class='txt-xl mt18 mb12'>References:</h2>
         <h5>[1] Bill Paton, Labor Export Policy in the development of Southern Africa, Macmillan Press Ltd,London, 1995, p.1-22.
           [2] Musoni Francis, Border Jumping and migration control in Southern Africa, Indiana University Press, Bloomington, 2020, p.8-12.</h5>
-<!--
+        <!--
         <hr class='txt-hr'>
         <footer class='mt12 bg-gray-faint txt-s'>
           <ul>
@@ -205,19 +212,25 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <!-- for icon markers -->
+  <script src="js/leaflet.extra-markers.min.js"></script>
+  <!-- for map layers -->
   <script src="./data/southern_africa_ethnicity_murdock_1959.js"></script>
   <script src="./data/SouthAfrica_migration.js"></script>
   <script src="./data/Zimbabwe_migration.js"></script>
+  <script src="./data/disease-famine-southern-africa.js"></script>
 
   <!-- begin javascript -->
   <script>
     function googleTranslateElementInit() {
-      new google.translate.TranslateElement({pageLanguage: 'en'},
-    'google_translate_element');
+      new google.translate.TranslateElement({
+          pageLanguage: 'en'
+        },
+        'google_translate_element');
     }
 
     var map = L.map('map', {
-      center: [-20.00, 30.00], // You can hardcode the center of the map on specific coordinates
+      center: [-19.00, 30.00], // You can hardcode the center of the map on specific coordinates
       zoom: 6 // You can hardcode the initial zoom level
     });
 
@@ -282,6 +295,32 @@
       return width * 1.25; // adjust 1.25 as a scale factor
     }; // end calcWidth() function
 
+    // define a function to retrieve different icons for markers
+    function getIcon(d) {
+      return d === "Spanish Flu" ? 'fas fa-head-side-cough' :
+             d === "Foot and Mouth Cattle Disease" ? 'fas fa-viruses' :
+             d === "Sleeping Sickness and Trypanosomiasis" ? 'fas fa-procedures' :
+             d === "East Coast Fever" ? 'fas fa-disease' :
+             d === "Drought" ? 'fas fa-sun' :
+             d === "Famine" ? 'fas fa-bone' :
+             d === "Tuberculosis" ? 'fas fa-bacterium' :
+             d === "Pneumonia" ? 'fas fa-lungs-virus' :
+             'fa fa-medkit';
+    };
+
+    // define a function to retrieve different colors for markers
+    function getMarkerColor(d) {
+      return d === "Spanish Flu" ? 'red' :
+             d === "Foot and Mouth Cattle Disease" ? 'tan' :
+             d === "Sleeping Sickness and Trypanosomiasis" ? 'blue' :
+             d === "East Coast Fever" ? 'purple' :
+             d === "Drought" ? 'orange' :
+             d === "Famine" ? 'brown' :
+             d === "Tuberculosis" ? 'yellow' :
+             d === "Pneumonia" ? 'green' :
+             'gray';
+    };
+
     // Define the current year selected by the slider
     var currentYear = $('.slider').val();
 
@@ -289,10 +328,10 @@
     var migrationLayer1 = new L.migrationLayer({
       map: map,
       data: southAfricaEmigration,
-      pulseRadius: 30,
-      pulseBorderWidth: 3,
+      pulseRadius: 0,
+      pulseBorderWidth: 0,
       arcWidth: Math.round(calcWidth(Number(southAfricaEmigration[0]['emigrants_' + currentYear])) / 5),
-      arcLabel: true,
+      arcLabel: false,
       arcLabelFont: '10px sans-serif',
       maxWidth: 10
     });
@@ -301,10 +340,10 @@
     var migrationLayer2 = new L.migrationLayer({
       map: map,
       data: zimbabweEmigration,
-      pulseRadius: 30,
-      pulseBorderWidth: 3,
+      pulseRadius: 0,
+      pulseBorderWidth: 0,
       arcWidth: Math.round(calcWidth(Number(zimbabweEmigration[0]['emigrants_' + currentYear])) / 5),
-      arcLabel: true,
+      arcLabel: false,
       arcLabelFont: '10px sans-serif',
       maxWidth: 10
     });
@@ -375,6 +414,37 @@
 
     }); // end ethnicities1959
 
+    // Declare a variable and make a leaflet geoJSON layer for the major events points
+    var majorEvents = L.geoJSON(diseaseFamine, {
+
+      pointToLayer: function(feature, ll) {
+
+        return L.marker(ll, {
+          icon: L.ExtraMarkers.icon({
+            icon: getIcon(feature.properties.Outbreak),
+            prefix: 'fa',
+            markerColor: getMarkerColor(feature.properties.Outbreak),
+            iconColor: 'white'
+          })
+        })
+
+      }, //end pointToLayer
+
+      // On each marker...
+      onEachFeature: function(feature, layer) {
+
+        // define the layer feature properties
+        var props = layer.feature.properties;
+
+        // bind info to the layer features using popups
+        layer.bindPopup("<h4 class=txt-bold>" + props.Outbreak + ", " + props.Place + ", " + props.Year + "</h4><h5>" + props.Notes + "</h5>", {closeButton: false});
+        layer.on('mouseover', function() { layer.openPopup(); });
+        layer.on('mouseout', function() { layer.closePopup(); });
+
+      } // end onEachFeature
+
+    }); // end majorEvents
+
     // Define the baselayers for the layer control
     var baselayers = {
       "Political Map, 1922": base1922,
@@ -394,8 +464,8 @@
     }).addTo(map);
 
     createTemporalLegend(currentYear);
-    sequenceUI(migrationLayer1, migrationLayer2);
-    updateArrow(migrationLayer1, migrationLayer2, currentYear);
+    sequenceUI(migrationLayer1, migrationLayer2, majorEvents);
+    updateArrow(migrationLayer1, migrationLayer2, majorEvents, currentYear);
 
     // add a temporal legend in sync with the UI slider
     function createTemporalLegend(currentYear) {
@@ -424,7 +494,7 @@
     }; // end createTemporalLegend function
 
     // add a UI slider
-    function sequenceUI(migrationLayer1, migrationLayer2) {
+    function sequenceUI(migrationLayer1, migrationLayer2, majorEvents) {
 
       // create Leaflet control for the slider
       var sliderControl = L.control({
@@ -450,13 +520,18 @@
         .on('input change', function() {
           var currentYear = $(this).val(); // identifies the year selected
           createTemporalLegend(currentYear);
-          updateArrow(migrationLayer1, migrationLayer2, currentYear);
+          updateArrow(migrationLayer1, migrationLayer2, majorEvents, currentYear);
         });
 
     }; // End sequenceUI function
 
+    // Declare universal variables for the country markers
+    var malawiMarker;
+    var southAfricaMarker;
+    var zimbabweMarker;
+
     // Define updateArrow function
-    function updateArrow(migrationLayer1, migrationLayer2, currentYear) {
+    function updateArrow(migrationLayer1, migrationLayer2, majorEvents, currentYear) {
 
       // Update width based on emigration from Malawi to South Africa
       var southAfricaData = migrationLayer1.options.data[0];
@@ -484,8 +559,50 @@
       // Add the Malawi to Zimbabwe arrow to the map
       migrationLayer2.addTo(map);
 
-      var malawiMarker = L.marker([-13.5, 34]).addTo(map);
+      // If the marker is already defined...
+      if (malawiMarker != undefined) {
+        malawiMarker.removeFrom(map); // remove it from the map.
+      } // This prevents the propagation of multiple duplicate markers on the map as the slider is moved
 
+      // If the marker is already defined...
+      if (southAfricaMarker != undefined) {
+        southAfricaMarker.removeFrom(map); // remove it from the map.
+      } // This prevents the propagation of multiple duplicate markers on the map as the slider is moved
+
+      // If the marker is already defined...
+      if (zimbabweMarker != undefined) {
+        zimbabweMarker.removeFrom(map); // remove it from the map.
+      } // This prevents the propagation of multiple duplicate markers on the map as the slider is moved
+
+      // Define the universal marker variables
+      malawiMarker = L.marker([-13.5, 34], {
+        icon: L.ExtraMarkers.icon({
+          icon: 'fas fa-globe-africa',
+          prefix: 'fa',
+          markerColor: 'black',
+          iconColor: 'red'
+        })
+      }).addTo(map);
+
+      zimbabweMarker = L.marker([-20, 30], {
+        icon: L.ExtraMarkers.icon({
+          icon: 'fas fa-globe-africa',
+          prefix: 'fa',
+          markerColor: 'red',
+          iconColor: 'yellow'
+        })
+      }).addTo(map);
+
+      southAfricaMarker = L.marker([-26.204444, 28.045556], {
+        icon: L.ExtraMarkers.icon({
+          icon: 'fas fa-globe-africa',
+          prefix: 'fa',
+          markerColor: 'green',
+          iconColor: 'yellow'
+        })
+      }).addTo(map);
+
+      // Bind popups to the country markers
       malawiMarker.bindPopup('<h4 class=txt-bold>Malawi, ' + currentYear + '</h4>' +
         '<h5>Emigration to South Africa: ' + southAfricaEmigration +
         '<br>Emgiration to Zimbabwe: ' + zimbabweEmigration + '</h5>');
@@ -497,8 +614,39 @@
         this.closePopup();
       });
 
-    }; // End updateArrow function
+      zimbabweMarker.bindPopup('<h4 class=txt-bold>Zimbabwe, ' + currentYear + '</h4>' +
+        '<h5>Immigration from Malawi: ' + zimbabweEmigration + '</h5>');
 
+      zimbabweMarker.on('mouseover', function(e) {
+        this.openPopup();
+      });
+      zimbabweMarker.on('mouseout', function(e) {
+        this.closePopup();
+      });
+
+      southAfricaMarker.bindPopup('<h4 class=txt-bold>South Africa, ' + currentYear + '</h4>' +
+        '<h5>Immigration from Malawi: ' + southAfricaEmigration + '</h5>');
+
+      southAfricaMarker.on('mouseover', function(e) {
+        this.openPopup();
+      });
+      southAfricaMarker.on('mouseout', function(e) {
+        this.closePopup();
+      });
+
+      majorEvents.eachLayer(function(layer) {
+
+        var def = layer.feature.properties.Year;
+
+        if (def <= currentYear) {
+          map.addLayer(layer)
+        } else {
+          map.removeLayer(layer)
+        }
+
+      });
+
+    }; // End updateArrow function
   </script>
 
 </body>
