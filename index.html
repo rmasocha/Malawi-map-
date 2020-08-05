@@ -1,103 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
 <head>
-  <meta charset="utf-8">
-  <!-- The title of the web page -->
-  <title>Type your page title here</title>
+  <title>Labor Migration from Malawi to South Africa and Zimbabwe: 1904-1950</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link href='https://api.mapbox.com/mapbox-assembly/v0.8.0/assembly.min.css' rel='stylesheet'>
+  <link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
+  <!--for icon support-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/v4-shims.css">
+  <!-- for icon markers -->
+  <link rel="stylesheet" href="css/leaflet.extra-markers.min.css">
 
-  <!-- Link to Montserrat font -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-  <!-- Link the css files -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css">
-
-  <!-- The rest of the css -->
   <style>
-    /* This declares the following code to be css */
-
-    body {
-      margin: 0px;
-      height: 100%;
-      width: 100%;
-    }
-
-    /* Add banner to header background */
-    header {
-      position: fixed;
-      top: 0px;
-      width: 100%;
-      height: 52px;
-      background-color: #000000;
-      box-shadow: 0px 0px 5px black;
-      z-index: 800;
-    }
-
-    /* Set font styles */
     h1 {
       font-family: 'Montserrat', sans-serif;
-      color: white;
-      font-size: 16px;
-      display: inline-block;
-      margin-top: 0.5em;
-      margin-bottom: 0.0em;
-      margin-left: 0.5em;
-      margin-right: 0;
-      font-weight: normal;
+      font-size: 20px;
+      color: #67271d;
     }
 
     h2 {
       font-family: 'Montserrat', sans-serif;
-      font-size: 12px;
-      color: white;
-      display: inline-block;
-      margin-top: 0.25em;
-      margin-bottom: 0.0em;
-      margin-left: 0.75em;
-      margin-right: 0;
-      font-weight: normal;
+      font-size: 18px;
+      color: #67271d;
     }
 
     h3 {
-      font-family: 'Montserrat', sans-serif;
-      padding: 0px;
-      font-size: 16px;
-      font-weight: bold;
+      font-family: 'Montserrat', serif;
+      font-size: 12px;
     }
 
     h4 {
-      font-family: 'Montserrat', sans-serif;
-      padding: 0px;
-      font-size: 13px;
-      line-height: 14px;
+      font-family: 'Montserrat', serif;
+      font-size: 12px;
     }
 
     h5 {
-      font-family: 'Montserrat', sans-serif;
-      padding: 0px;
+      font-family: 'Cardo', serif;
       font-size: 12px;
-      line-height: 13px;
-      font-weight: normal;
     }
 
-    h6 {
-      padding: 0px;
-      font-size: 12px;
-      font-family: "Montserrat";
+    /* Position the translate element */
+    #google_translate_element {
+      position: absolute;
+      left: 33%;
+      top: 10px;
+      padding: 5px;
+      background-color: #FFFFFF;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
     }
 
-    /* Set map parameters */
-    #map {
-      position: fixed;
-      bottom: 0px;
-      width: 100%;
-      top: 52px;
+    #scroll {
+      background-image: url(images/fresh_snow.png);
+      /* add subtle pattern to background from (https://www.toptal.com/designers/subtlepatterns/fresh-snow/) */
     }
 
     /* Set time slider styles */
     #slider {
       position: absolute;
       height: 25px;
-      bottom: 20px;
+      bottom: 0px;
       left: 125px;
       z-index: 1000;
       background-color: #FFFFFF;
@@ -107,10 +74,7 @@
 
     /* Set temporal legend styles */
     #temporal {
-      position: absolute;
-      width: 100px;
       height: 25px;
-      bottom: 20px;
       background-color: #FFFFFF;
       border-radius: 3px;
       box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
@@ -118,46 +82,155 @@
 
     /* Set the styles for the text span in the temporal legend */
     #temporal span {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 12px;
       position: absolute;
       bottom: 3px;
-      left: 15px;
+      left: 10px;
     }
-  </style> <!-- Escape the css code -->
+
+    /* Migration arrow layer button styles */
+    #event {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      height: 100px;
+      width: 400px;
+      z-index: 10000;
+    }
+
+    .btn {
+      font: 12px 'Montserrat', sans-serif;
+      color: black;
+      padding: 5px;
+      border: 1px solid transparent;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      outline: none;
+      alignment-baseline: central;
+      right: 12px;
+      top: 55px;
+      text-align: center;
+      text-decoration: none;
+      margin: 0px auto;
+      background-color: #FFFFFF;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:hover {
+      background-color: #f9f9f9;
+    }
+
+    hr.small,
+    hr.large {
+      width: 80px;
+      position: absolute;
+      top: -9px;
+      left: 62px;
+      border: 1px solid #ccc;
+      /* overwrite assembly.css rule */
+      margin-top: 8px;
+      /* overwrite assembly.css rule */
+    }
+  </style>
 
 </head>
 
 <body>
-  <header>
-    <h1>Type your map title here</h1><br>
-    <h2>Ruvarashe Masocha, University of Iowa</h2>
-  </header>
+  <div class='grid h180'>
+    <div class='col col--12 col--3-ml p12 pb6 viewport-third viewport-full-ml'>
+      <div id='scroll' class='h-full scroll-auto'>
+        <h1 class='txt-subhead mb6'>Labor Migration from Malawi to South Africa and Zimbabwe: 1904-1950</h1>
+        <h5>This map presents the labor migration flow for migrants from Malawi going to work in South Africa and Zimbabwe between the years 1904 and 1950. The map visualizes numerous factors intersecting together in shaping migration patterns and
+          captures the complexity of understanding migration patterns in Southern Africa. Firstly, there were legal and illegal ways that migrants traveled from Malawi to other countries [1]. Secondly, several ethnicities share common backgrounds and
+          are closely related who speak similar dialects sparse across Malawi, Zimbabwe, South Africa, and other parts of Southern Africa. Finally, several factors, such as disease and culture, shape the migration patterns. Thinking about migration
+          networks and patterns through the labor migrant system of Southern Africa then begs the question of how to locate these patterns and network systems.</h5>
+        <h2 class='txt-xl mt18 mb12'>Argument:</h2>
+        <h5>The data visualization through mapping labor migration patterns does not only change the format of presenting information on migration in Southern Africa. Scholars analyze labor migration in colonial Africa, concentrating on routes
+          developed by the colonial governments [2]. However, through the map, one begins to realize that there were existing routes used by Africans for trading and to connect their communities in Southern Africa even before colonial rule. The
+          question the map raises is, how do these routes connect to colonial labor migration networks in Southern Africa? This map makes apparent the fact that there are so many ways to think about and interpret labor migration in Southern Africa.
+          It encourages scholars to think and pay attention to those seemingly hidden routes knowledgeable to Africans, which they used to travel across southern Africa. These are the routes that enabled so many Africans to migrate successfully as
+          undocumented from Malawi.</h5>
+        <h2 class='txt-xl mt18 mb12'>Data Description:</h2>
+        <h5>The map is based on data extracted from annual blue book statistics of the Nyasaland colony between 1904 and 1938. I accessed the Bluebooks on the British online archives <a class='link'
+            href='https://microform.digital/boa/collections'>website</a>. From the Bluebooks, I got the annual immigration and emigration census data and total population percentages. The statistical data is supplemented by other data of the number
+          of migrants working in Zimbabwe and South Africa between 1904 and 1950 extracted from the statistical index published in the book Labor Export Policy in the Development of Southern Africa by Bill Paton. The map has an ethnicity layer that
+          overlays the political boundaries of southern Africa. Data for ethnic demarcations and the shapefile were found on the Harvard <a class='link' href='http://worldmap.harvard.edu/data/geonode:murdock_ea_2010_3'>website</a>. Because this map
+          is based on colonial archival data of migration statistics, it misses accounting for the numerous migrants who used different routes that were not official and, therefore, never recorded by the colonial system. However, looking at the
+          spread-out nature of ethnic groups and southern Africa over the demarcated colonial borders shows us that ethnic relations and connections in this part of Africa run across the colonial borders. Therefore, when we think about colonial
+          migration networks, it would be worthwhile to focus on these instead of concentrating on colonial borders.</h5>
+        <h2 class='txt-xl mt18 mb12'>References:</h2>
+        <h5>[1] Bill Paton, Labor Export Policy in the development of Southern Africa, Macmillan Press Ltd,London, 1995, p.1-22.
+          [2] Musoni Francis, Border Jumping and migration control in Southern Africa, Indiana University Press, Bloomington, 2020, p.8-12.</h5>
+        <!--
+        <hr class='txt-hr'>
+        <footer class='mt12 bg-gray-faint txt-s'>
+          <ul>
+            <li>Choropleth ranges are derived from the application of natural breaks (jenks) to the data representing each nation's share of the total volume of weapons sold between 2008 and 2018. This was modified to remove nations with no purchases from the bottom class.</li>
+            <li>Explore the raw data: <a class='link' href='https://www.sipri.org/databases/armstransfers'>SIPRI Arms Transfers Database</a></li>
+            <li>Map authored by <a class='link' href='https://geography.as.uky.edu/users/jebowe3'>Jay Bowen</a>, 2019</li>
+          </ul>
+        </footer>
+-->
+      </div>
+      <!-- end scroll bar -->
+    </div>
+    <div class='col col--12 col--9-ml h180 h-full-ml'>
+      <div id="map" class='viewport-twothirds viewport-full-ml'></div>
 
-  <!-- The map will go inside this div below -->
-  <div id="map"></div>
+      <!-- ui slider -->
+      <div id='slider' class='range w240 bg-white border border--gray-light round-ml p12'>
+        <input type='range' min="1904" max="1950" value="1904" step="1" class="slider" />
+      </div>
+      <!-- end slider -->
 
-  <!-- ui slider -->
-  <div id='slider' class='leaflet-control'>
-    <!-- Use the first and last year of the time data as the min and max. Set the initial value as the first year. Set the steps at one year. -->
-    <input type='range' min="1920" max="1938" value="1920" step="1" class="slider" />
+      <!-- temporal legend -->
+      <div id='temporal' class='py6 px48 bg-white border border--gray-light round bottom left wmax200'>
+        <h3 class='txt-bold'><span></span></h3>
+      </div>
+      <!-- end temporal -->
+
+      <!-- arrow buttons -->
+      <div id='event'>
+        <input type="button" value="hide arrows" class="btn" onclick="hide()">
+        <input type="button" value="show arrows" class="btn" onclick="show()">
+      </div>
+      <!-- end end arrow buttons -->
+
+      <!-- keeps map from jarring -->
+      <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+
+      <!-- google translate element -->
+      <div id="google_translate_element"></div>
+
+    </div>
   </div>
 
-  <!-- temporal legend -->
-  <div id='temporal' class='leaflet-control'>
-    <h6 class='txt-bold'><span></span></h6>
-  </div>
-
-  <!-- Link to the js files -->
+  <!-- load scripts -->
+  <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+  <script src='./src/src.js'></script>
   <script src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <!-- for icon markers -->
+  <script src="js/leaflet.extra-markers.min.js"></script>
+  <!-- for map layers -->
+  <script src="./data/southern_africa_ethnicity_murdock_1959.js"></script>
+  <script src="./data/SouthAfrica_migration.js"></script>
+  <script src="./data/Zimbabwe_migration.js"></script>
+  <script src="./data/disease-famine-southern-africa.js"></script>
 
-  <!-- The rest of the JavaScript -->
+  <!-- begin javascript -->
   <script>
-    // Initialize the map
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+          pageLanguage: 'en'
+        },
+        'google_translate_element');
+    }
+
     var map = L.map('map', {
-      center:[-20.00, 30.00], // You can hardcode the center of the map on specific coordinates
+      center: [-19.00, 30.00], // You can hardcode the center of the map on specific coordinates
       zoom: 6 // You can hardcode the initial zoom level
     });
 
@@ -166,7 +239,7 @@
       maxZoom: 18, // Set the maximum zoom level
       minZoom: 2, // Set the minimum zoom level
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    });
 
     var base1922 = L.tileLayer('maptiles/political/{z}/{x}/{y}.png', {
       minZoom: 2,
@@ -180,216 +253,222 @@
       position: 'bottomright' // Position the scale bar at the bottom-right corner
     }).addTo(map);
 
-
     // Add functions to style the polygons by values
     function getColorGroup(d) {
       return d === "Barotseland" ? '#8ad77e' :
-      d === "Bemba-Lamba" ? '#eb8a14' :
-      d === "San" ? '#ef7890' :
-      d === "Cushites, Southern" ? '#de350f' :
-      d === "Fang-Dzem" ? '#e3ee8c' :
-      d === "Khoekhoen" ? '#cb2a2d' :
-      d === "Ila-Tonga" ? '#5fc0d3' :
-      d === "Kasai" ? '#2f95cb' :
-      d === "Kenya Highlands" ? '#5662df' :
-      d === "Lower Congo" ? '#7cca55' :
-      d === "Luba" ? '#4be3c5' :
-      d === "Luguru-Zigula" ? '#8a44d5' :
-      d === "Lunda" ? '#ebe280' :
-      d === "Maravi" ? '#0e6ad9' :
-      d === "Masai" ? '#b33dee' :
-      d === "Mongo" ? '#c24cd7' :
-      d === "Ngonde" ? '#eb558e' :
-      d === "Nguni" ? '#cba02b' :
-      d === "Nyamwezi" ? '#32d4d2' :
-      d === "Nyika" ? '#70ca85' :
-      d === "Rift" ? '#df6bdb' :
-      d === "Riverain Congo" ? '#df5cc1' :
-      d === "Rufiji" ? '#81e4aa' :
-      d === "Rukwa" ? '#4d0ded' :
-      d === "Shona-Thonga" ? '#89e88e' :
-      d === "Sotho" ? '#53e4aa' :
-      d === "Southwestern Bantu" ? '#98c864' :
-      d === "Swahili" ? '#cc845a' :
-      d === "West Lacustrine Bantu" ? '#9188eb' :
-      d === "Western Angola" ? '#bae457' :
-      d === "Yao-Makonde" ? '#5b81e8' :
-            'rgba(0,0,0,0.0)';
+        d === "Bemba-Lamba" ? '#eb8a14' :
+        d === "San" ? '#ef7890' :
+        d === "Cushites, Southern" ? '#de350f' :
+        d === "Fang-Dzem" ? '#e3ee8c' :
+        d === "Khoekhoen" ? '#cb2a2d' :
+        d === "Ila-Tonga" ? '#5fc0d3' :
+        d === "Kasai" ? '#2f95cb' :
+        d === "Kenya Highlands" ? '#5662df' :
+        d === "Lower Congo" ? '#7cca55' :
+        d === "Luba" ? '#4be3c5' :
+        d === "Luguru-Zigula" ? '#8a44d5' :
+        d === "Lunda" ? '#ebe280' :
+        d === "Maravi" ? '#0e6ad9' :
+        d === "Masai" ? '#b33dee' :
+        d === "Mongo" ? '#c24cd7' :
+        d === "Ngonde" ? '#eb558e' :
+        d === "Nguni" ? '#cba02b' :
+        d === "Nyamwezi" ? '#32d4d2' :
+        d === "Nyika" ? '#70ca85' :
+        d === "Rift" ? '#df6bdb' :
+        d === "Riverain Congo" ? '#df5cc1' :
+        d === "Rufiji" ? '#81e4aa' :
+        d === "Rukwa" ? '#4d0ded' :
+        d === "Shona-Thonga" ? '#89e88e' :
+        d === "Sotho" ? '#53e4aa' :
+        d === "Southwestern Bantu" ? '#98c864' :
+        d === "Swahili" ? '#cc845a' :
+        d === "West Lacustrine Bantu" ? '#9188eb' :
+        d === "Western Angola" ? '#bae457' :
+        d === "Yao-Makonde" ? '#5b81e8' :
+        'rgba(0,0,0,0.0)';
     };
 
-    // Load your data asynchronously
-    d3.queue()
-      .defer(d3.json, 'data/southern_africa_ethnicity_murdock_1959.geojson') // Provide the path to your data file
-      .defer(d3.json, 'data/Malawi_immigration_test.geojson') // Add more files if needed
-      .await(drawMap); // Load the layers after the map loads
+    // calculate arc width
+    function calcWidth(val) {
+      var width = Math.sqrt(val / Math.PI);
+      return width * 1.25; // adjust 1.25 as a scale factor
+    }; // end calcWidth() function
 
-    // Provide instructions for drawing the map
-    function drawMap(err, data1, data2) {
+    // define a function to retrieve different icons for markers
+    function getIcon(d) {
+      return d === "Spanish Flu" ? 'fas fa-head-side-cough' :
+             d === "Foot and Mouth Cattle Disease" ? 'fas fa-viruses' :
+             d === "Sleeping Sickness and Trypanosomiasis" ? 'fas fa-procedures' :
+             d === "East Coast Fever" ? 'fas fa-disease' :
+             d === "Drought" ? 'fas fa-sun' :
+             d === "Famine" ? 'fas fa-bone' :
+             d === "Tuberculosis" ? 'fas fa-bacterium' :
+             d === "Pneumonia" ? 'fas fa-lungs-virus' :
+             'fa fa-medkit';
+    };
 
-      var dataOne = L.geoJson(data1, { // Define the first data layer with a variable
+    // define a function to retrieve different colors for markers
+    function getMarkerColor(d) {
+      return d === "Spanish Flu" ? 'red' :
+             d === "Foot and Mouth Cattle Disease" ? 'tan' :
+             d === "Sleeping Sickness and Trypanosomiasis" ? 'blue' :
+             d === "East Coast Fever" ? 'purple' :
+             d === "Drought" ? 'orange' :
+             d === "Famine" ? 'brown' :
+             d === "Tuberculosis" ? 'yellow' :
+             d === "Pneumonia" ? 'green' :
+             'gray';
+    };
 
-        // Style the layer
-        style: function(feature) {
-          return {
-            color: "grey",
-            weight: 1,
-            opacity: 0.75,
-            fillColor: getColorGroup(feature.properties.CultureGrp), // This returns the color assignments from the getColorGroup function above
-            fillOpacity: 0.5
-          };
-        },
+    // Define the current year selected by the slider
+    var currentYear = $('.slider').val();
 
-        // Restyle on mouseover, reset style on mouseout
-        onEachFeature: function(feature, layer) {
+    // Define a migration layer for emigration from Malawi to South Africa
+    var migrationLayer1 = new L.migrationLayer({
+      map: map,
+      data: southAfricaEmigration,
+      pulseRadius: 0,
+      pulseBorderWidth: 0,
+      arcWidth: Math.round(calcWidth(Number(southAfricaEmigration[0]['emigrants_' + currentYear])) / 5),
+      arcLabel: false,
+      arcLabelFont: '10px sans-serif',
+      maxWidth: 10
+    });
 
-          var props = layer.feature.properties; // Get the properties of the layer features
-          console.log(props); // Check these properties in the developer web console
+    // Define a migration layer for emigration from Malawi to Zimbabwe
+    var migrationLayer2 = new L.migrationLayer({
+      map: map,
+      data: zimbabweEmigration,
+      pulseRadius: 0,
+      pulseBorderWidth: 0,
+      arcWidth: Math.round(calcWidth(Number(zimbabweEmigration[0]['emigrants_' + currentYear])) / 5),
+      arcLabel: false,
+      arcLabelFont: '10px sans-serif',
+      maxWidth: 10
+    });
 
-          // Bind a popup window to the layer
-          layer.bindPopup("<h3>" + props['NAME'] + "</h3>" +
-            "<h4>Cultural Group:" +
-            "</h4><h5>" + props['CultureGrp'] +
-            //"<br>Domestic Organization: " + "<br>" + props['v8tr'] +
-            //"<br>Residence After Marriage: " + "<br>" + props['v10tr'] +
-            //"<br>Community Marriage Organization: " + "<br>" + props['v15tr'] +
-            "</h5><h4>Settlement Patterns: " + "</h4><h5>" + props['v30tr'] +
-            "</h5><h4>Community Size: " + "</h4><h5>" + props['v31tr'] +
-            //"<br>Local Jurisdictional Hierarchy: " + "<br>" + props['v32r'] +
-            //"<br>Deities: " + "<br>" + props['v34tr'] +
-            //"<br>Post-Partem Sex Taboo: " + "<br>" + props['v36tr'] +
-            //"<br>Male Genital Mutilation: " + "<br>" + props['v37tr'] +
-            "</h5><h4>Subsistence Economy: " + "</h4><h5>" + props['v42tr'] +
-            "</h5><h4>Class Stratification: " + "</h4><h5>" + props['v66tr'] +
-            //"<br>Type of Slavery: " + "<br>" + props['v70tr'] +
-            "</h5><h4>Property Inheritance: " + "</h4><h5>" + props['v74tr'] +
-            /*"<br>Dwelling Roof: " + "<br>" + props['v82tr'] + */"</h5>"
-          );
+    function hide() {
+      migrationLayer1.hide();
+      migrationLayer2.hide();
+    }
 
-          layer.on({
+    function show() {
+      migrationLayer1.show();
+      migrationLayer2.show();
+    }
 
-            // Define what happens on mouseover
-            mouseover: function(e) {
-              var layer = e.target;
-              layer.setStyle({
-                color: '#3232FF',
-                weight: 3,
-                opacity: 0.75
-              });
-            },
+    // Declare a variable and make a leaflet geoJSON layer for the 1959 ethnicities polygons
+    var ethnicities1959 = L.geoJSON(ethnicity1959, {
 
-            // Define what happens on mouseout
-            mouseout: function(e) {
+      // Style the layer
+      style: function(feature) {
+        return {
+          color: "grey",
+          weight: 1,
+          opacity: 0.75,
+          fillColor: getColorGroup(feature.properties.CultureGrp), // This returns the color assignments from the getColorGroup function above
+          fillOpacity: 0.5
+        };
+      },
 
-              // Reset the layer styles
-              dataOne.resetStyle(e.target);
+      // Restyle on mouseover, reset style on mouseout
+      onEachFeature: function(feature, layer) {
 
-            },
+        var props = layer.feature.properties; // Get the properties of the layer features
 
-          });
-        }
+        // Bind a popup window to the layer
+        layer.bindPopup("<h3 class='txt-bold'>" + props['NAME'] + "</h3>" +
+          "<h4 class='txt-bold'>Cultural Group:" +
+          "</h4><h5>" + props['CultureGrp'] +
+          "</h5><h4 class='txt-bold'>Settlement Patterns: " + "</h4><h5>" + props['v30tr'] +
+          "</h5><h4 class='txt-bold'>Community Size: " + "</h4><h5>" + props['v31tr'] +
+          "</h5><h4 class='txt-bold'>Subsistence Economy: " + "</h4><h5>" + props['v42tr'] +
+          "</h5><h4 class='txt-bold'>Class Stratification: " + "</h4><h5>" + props['v66tr'] +
+          "</h5><h4 class='txt-bold'>Property Inheritance: " + "</h4><h5>" + props['v74tr'] +
+          "</h5>"
+        );
 
-      }).addTo(map); // Add the first data layer to the map
+        layer.on({
 
-      var propEmigration = L.geoJson(data2, { // Define the first data layer with a variable
+          // Define what happens on mouseover
+          mouseover: function(e) {
+            var layer = e.target;
+            layer.setStyle({
+              color: '#3232FF',
+              weight: 3,
+              opacity: 0.75
+            });
+          },
 
-        pointToLayer: function(feature, ll) {
+          // Define what happens on mouseout
+          mouseout: function(e) {
 
-          //style the points as circle markers
-          return L.circleMarker(ll, {
-            weight: 1, // set the weight of the border
-            opacity: 1, // set the opacity of the border
-            fillOpacity: 0.5, // set the opacity of the fill color
+            // Reset the layer styles
+            ethnicities1959.resetStyle(e.target);
+
+          },
+
+        });
+      }
+
+    }); // end ethnicities1959
+
+    // Declare a variable and make a leaflet geoJSON layer for the major events points
+    var majorEvents = L.geoJSON(diseaseFamine, {
+
+      pointToLayer: function(feature, ll) {
+
+        return L.marker(ll, {
+          icon: L.ExtraMarkers.icon({
+            icon: getIcon(feature.properties.Outbreak),
+            prefix: 'fa',
+            markerColor: getMarkerColor(feature.properties.Outbreak),
+            iconColor: 'white'
           })
-        }, //end pointToLayer
+        })
 
-        //restyle on mouseover, reset style on mouseout
-        onEachFeature: function(feature, layer) {
+      }, //end pointToLayer
 
-          //define what happens on mouseover
-          layer.on("mouseover", function(e) {
-            layer.setStyle({
-              fillColor: '#e59866',
-            });
-          });
+      // On each marker...
+      onEachFeature: function(feature, layer) {
 
-          //define what happens on mouseout
-          layer.on("mouseout", function(e) {
-            layer.setStyle({
-              opacity: 1,
-              color: '#ba4a00',
-              fillColor: '#dc7633',
-            });
-          });
+        // define the layer feature properties
+        var props = layer.feature.properties;
 
-        } //end onEachFeature
+        // bind info to the layer features using popups
+        layer.bindPopup("<h4 class=txt-bold>" + props.Outbreak + ", " + props.Place + ", " + props.Year + "</h4><h5>" + props.Notes + "</h5>", {closeButton: false});
+        layer.on('mouseover', function() { layer.openPopup(); });
+        layer.on('mouseout', function() { layer.closePopup(); });
 
-      }); // End propEmmigration
+      } // end onEachFeature
 
-      var propImmigration = L.geoJson(data2, { // Define the first data layer with a variable
+    }); // end majorEvents
 
-        pointToLayer: function(feature, ll) {
+    // Define the baselayers for the layer control
+    var baselayers = {
+      "Political Map, 1922": base1922,
+      "Political Map, Contemporary": baseContemporary,
+    };
 
-          //style the points as circle markers
-          return L.circleMarker(ll, {
-            weight: 1, // set the weight of the border
-            opacity: 1, // set the opacity of the border
-            fillOpacity: 0.5, // set the opacity of the fill color
-          })
-        }, //end pointToLayer
+    // Define the overlay layers for the layer control
+    var overlays = {
+      "Ethnic Groups, 1959": ethnicities1959,
+      //"Emigration to South Africa": migrationLayer1,
+      //"Emigration to Zimbabwe": migrationLayer2
+    };
 
-        //restyle on mouseover, reset style on mouseout
-        onEachFeature: function(feature, layer) {
+    // Send the layers to the layer control
+    L.control.layers(baselayers, overlays, {
+      collapsed: false,
+    }).addTo(map);
 
-          var props = layer.feature.properties;
-          console.log(props);
+    createTemporalLegend(currentYear);
+    sequenceUI(migrationLayer1, migrationLayer2, majorEvents);
+    updateArrow(migrationLayer1, migrationLayer2, majorEvents, currentYear);
 
-          //define what happens on mouseover
-          layer.on("mouseover", function(e) {
-            layer.setStyle({
-              fillColor: '#aed6f1',
-            });
-          });
-
-          //define what happens on mouseout
-          layer.on("mouseout", function(e) {
-            layer.setStyle({
-              opacity: 1,
-              color: '#2e86c1',
-              fillColor: '#5dade2',
-            });
-          });
-
-        } //end onEachFeature
-
-      }); // End propImmigration
-
-      // Fit the map to the extent of the first data layer upon drawing
-      //map.fitBounds(dataOne.getBounds());
-
-      // Define the overlay layers for the layer control
-      var overlays = {
-        "Political Map, 1922": base1922,
-        "Ethnic Groups, 1959": dataOne,
-        "Proportional Emigration": propEmigration,
-        "Proportional Immigration": propImmigration
-      };
-
-      // Send the layers to the layer control
-      L.control.layers(null, overlays, {
-        collapsed: false,
-      }).addTo(map);
-
-      // Define the current year selected by the slider
-      var currentYear = $('.slider').val();
-
-      createTemporalLegend(currentYear); // Produces temporal legend upon map loading
-      sequenceUI(propEmigration, propImmigration); // Produces the time slider and sends the layers to it
-      updateCircles(propEmigration, propImmigration, currentYear); // Updates the layers according to the year selected by the slider
-
-    }; //end drawMap function
-
-    // Add a temporal legend in sync with the UI slider
-    function createTemporalLegend(currentYear) { // THE FIRST TEMPORAL LEGEND
+    // add a temporal legend in sync with the UI slider
+    function createTemporalLegend(currentYear) {
 
       var temporalLegend = L.control({
         position: 'bottomleft' // place the temporal legend at bottom left corner
@@ -401,46 +480,36 @@
         var div = L.DomUtil.get("temporal"); // get the style settings
 
         // disable the mouse events
-        L.DomEvent.addListener(div, 'mousedown', function(e) {
-          L.DomEvent.stopPropagation(e);
-        });
+        L.DomEvent.disableScrollPropagation(div);
+        L.DomEvent.disableClickPropagation(div);
 
         return div; // return the style settings
 
       }
 
-      $('#temporal span').html("Year: " + currentYear); // change grade value to that currently selected by UI slider
+      $('#temporal span').html('Year: ' + currentYear); // change grade value to that currently selected by UI slider
 
       temporalLegend.addTo(map); // add the temporal legend to the map
 
-    }; // End createTemporalLegend function
+    }; // end createTemporalLegend function
 
     // add a UI slider
-    function sequenceUI(propEmigration, propImmigration) { // THE FIRST UI SLIDER
+    function sequenceUI(migrationLayer1, migrationLayer2, majorEvents) {
 
       // create Leaflet control for the slider
       var sliderControl = L.control({
-        position: 'bottomleft',
-        follow: true
+        position: 'bottomleft'
       });
 
       // add controls to the slider
       sliderControl.onAdd = function(map) {
 
-        var controls = L.DomUtil.get("slider"); // get the style settings
+        var controls = L.DomUtil.get("slider");
 
-        // disable the mouse events and map dragging on mousedown
-        L.DomEvent.addListener(controls, 'mousedown', function(e) {
-          L.DomEvent.stopPropagation(e);
-          map.dragging.disable();
-        });
+        L.DomEvent.disableScrollPropagation(controls);
+        L.DomEvent.disableClickPropagation(controls);
 
-        // re-enable map dragging on mouseout
-        L.DomEvent.addListener(slider, "mouseout", function(e) {
-          map.dragging.enable();
-        });
-
-        return controls; // return the style settings
+        return controls;
 
       }
 
@@ -451,70 +520,135 @@
         .on('input change', function() {
           var currentYear = $(this).val(); // identifies the year selected
           createTemporalLegend(currentYear);
-          updateCircles(propEmigration, propImmigration, currentYear);
+          updateArrow(migrationLayer1, migrationLayer2, majorEvents, currentYear);
         });
 
     }; // End sequenceUI function
 
-    // calculate circle radii
-    function calcRadius(val) {
-      var radius = Math.sqrt(val / Math.PI);
-      return radius * 1.25; // adjust 16 as a scale factor
-    }; // end calcRadius() function
+    // Declare universal variables for the country markers
+    var malawiMarker;
+    var southAfricaMarker;
+    var zimbabweMarker;
 
-    // Define updateCircles function
-    function updateCircles(propEmigration, propImmigration, currentYear) {
+    // Define updateArrow function
+    function updateArrow(migrationLayer1, migrationLayer2, majorEvents, currentYear) {
 
-      // change the layer based on the year-dependent data
-      propEmigration.eachLayer(function(layer) {
+      // Update width based on emigration from Malawi to South Africa
+      var southAfricaData = migrationLayer1.options.data[0];
+      var southAfricaEmigration = southAfricaData['emigrants_' + currentYear];
+      var updateSouthAfricaWidth = Math.round(calcWidth(Number(southAfricaEmigration)) / 5);
+      migrationLayer1.options.arcWidth = updateSouthAfricaWidth;
+      // Set the migration arrow's zIndex high enough that it always appears over other layers
+      migrationLayer1.container.style.zIndex = 1000;
+      // Keep the migration arrow from capturing clicks and touches, so the user can access the layers beneath it
+      migrationLayer1.container.style.pointerEvents = 'none';
 
-        var props = layer.feature.properties; // Define a properties variable called props
+      // Update width based on emigration from Malawi to Zimbabwe
+      var zimbabweData = migrationLayer2.options.data[0];
+      var zimbabweEmigration = zimbabweData['emigrants_' + currentYear];
+      var updateZimbabweWidth = Math.round(calcWidth(Number(zimbabweEmigration)) / 5);
+      migrationLayer2.options.arcWidth = updateZimbabweWidth;
+      // Set the migration arrow's zIndex high enough that it always appears over other layers
+      migrationLayer2.container.style.zIndex = 1000;
+      // Keep the migration arrow from capturing clicks and touches, so the user can access the layers beneath it
+      migrationLayer2.container.style.pointerEvents = 'none';
 
-        var radius = calcRadius(Number(props['emigrants_' + currentYear]));
-        layer.setRadius(radius);
-        if (radius > 0) {
-          layer.setStyle({
-            opacity: 1,
-            color: '#ba4a00',
-            fillColor: '#dc7633',
-          })
-        };
+      // Add the Malawi to South Africa arrow to the map
+      migrationLayer1.addTo(map);
 
-        //bind a popup window to each circle marker
-        layer.bindPopup("<h3>" + props.country + "</h3>" +
-          "<h4>Number of Emigrants: " + props['emigrants_' + currentYear] + "</h4>"
-        );
+      // Add the Malawi to Zimbabwe arrow to the map
+      migrationLayer2.addTo(map);
+
+      // If the marker is already defined...
+      if (malawiMarker != undefined) {
+        malawiMarker.removeFrom(map); // remove it from the map.
+      } // This prevents the propagation of multiple duplicate markers on the map as the slider is moved
+
+      // If the marker is already defined...
+      if (southAfricaMarker != undefined) {
+        southAfricaMarker.removeFrom(map); // remove it from the map.
+      } // This prevents the propagation of multiple duplicate markers on the map as the slider is moved
+
+      // If the marker is already defined...
+      if (zimbabweMarker != undefined) {
+        zimbabweMarker.removeFrom(map); // remove it from the map.
+      } // This prevents the propagation of multiple duplicate markers on the map as the slider is moved
+
+      // Define the universal marker variables
+      malawiMarker = L.marker([-13.5, 34], {
+        icon: L.ExtraMarkers.icon({
+          icon: 'fas fa-globe-africa',
+          prefix: 'fa',
+          markerColor: 'black',
+          iconColor: 'red'
+        })
+      }).addTo(map);
+
+      zimbabweMarker = L.marker([-20, 30], {
+        icon: L.ExtraMarkers.icon({
+          icon: 'fas fa-globe-africa',
+          prefix: 'fa',
+          markerColor: 'red',
+          iconColor: 'yellow'
+        })
+      }).addTo(map);
+
+      southAfricaMarker = L.marker([-26.204444, 28.045556], {
+        icon: L.ExtraMarkers.icon({
+          icon: 'fas fa-globe-africa',
+          prefix: 'fa',
+          markerColor: 'green',
+          iconColor: 'yellow'
+        })
+      }).addTo(map);
+
+      // Bind popups to the country markers
+      malawiMarker.bindPopup('<h4 class=txt-bold>Malawi, ' + currentYear + '</h4>' +
+        '<h5>Emigration to South Africa: ' + southAfricaEmigration +
+        '<br>Emgiration to Zimbabwe: ' + zimbabweEmigration + '</h5>');
+
+      malawiMarker.on('mouseover', function(e) {
+        this.openPopup();
+      });
+      malawiMarker.on('mouseout', function(e) {
+        this.closePopup();
+      });
+
+      zimbabweMarker.bindPopup('<h4 class=txt-bold>Zimbabwe, ' + currentYear + '</h4>' +
+        '<h5>Immigration from Malawi: ' + zimbabweEmigration + '</h5>');
+
+      zimbabweMarker.on('mouseover', function(e) {
+        this.openPopup();
+      });
+      zimbabweMarker.on('mouseout', function(e) {
+        this.closePopup();
+      });
+
+      southAfricaMarker.bindPopup('<h4 class=txt-bold>South Africa, ' + currentYear + '</h4>' +
+        '<h5>Immigration from Malawi: ' + southAfricaEmigration + '</h5>');
+
+      southAfricaMarker.on('mouseover', function(e) {
+        this.openPopup();
+      });
+      southAfricaMarker.on('mouseout', function(e) {
+        this.closePopup();
+      });
+
+      majorEvents.eachLayer(function(layer) {
+
+        var def = layer.feature.properties.Year;
+
+        if (def <= currentYear) {
+          map.addLayer(layer)
+        } else {
+          map.removeLayer(layer)
+        }
 
       });
 
-      propEmigration.addTo(map);
-
-      // change the layer based on the year-dependent data
-      propImmigration.eachLayer(function(layer) {
-
-        var props = layer.feature.properties; // Define a properties variable called props
-
-        var radius = calcRadius(Number(props['immigrants_' + currentYear]));
-        layer.setRadius(radius);
-        if (radius > 0) {
-          layer.setStyle({
-            opacity: 1,
-            color: '#2e86c1',
-            fillColor: '#5dade2',
-          })
-        };
-
-        //bind a popup window to each circle marker
-        layer.bindPopup("<h3>" + props.country + "</h3>" +
-          "<h4>Number of Immigrants: " + props['immigrants_' + currentYear] + "</h4>"
-        );
-
-      });
-
-      propImmigration.addTo(map);
-
-    }; // End updateCircles function
+    }; // End updateArrow function
   </script>
+
 </body>
 
 </html>
