@@ -38,6 +38,17 @@
       font-size: 12px;
     }
 
+    /* Position the translate element */
+    #google_translate_element {
+      position: absolute;
+      left: 33%;
+      top: 10px;
+      padding: 5px;
+      background-color: #FFFFFF;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
+    }
+
     #scroll {
       background-image: url(images/fresh_snow.png); /* add subtle pattern to background from (https://www.toptal.com/designers/subtlepatterns/fresh-snow/) */
     }
@@ -72,8 +83,8 @@
     /* Migration arrow layer button styles */
     #event {
       position: absolute;
-      top: 50px;
-      right: 300px;
+      top: 10px;
+      left: 50%;
       height: 100px;
       width: 400px;
       z-index: 10000;
@@ -82,20 +93,20 @@
     .btn {
       font: 12px 'Montserrat', sans-serif;
       color: black;
-      background-color: white;
       padding: 5px;
       border: 1px solid transparent;
-      border-radius: 2px;
       box-sizing: border-box;
       -moz-box-sizing: border-box;
       outline: none;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
       alignment-baseline: central;
       right: 12px;
       top: 55px;
       text-align: center;
       text-decoration: none;
       margin: 0px auto;
+      background-color: #FFFFFF;
+      border-radius: 3px;
+      box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.3);
     }
 
     .btn:hover {
@@ -118,7 +129,7 @@
 </head>
 
 <body>
-  <div class='grid'>
+  <div class='grid h180'>
     <div class='col col--12 col--3-ml p12 pb6 viewport-third viewport-full-ml'>
       <div id='scroll' class='h-full scroll-auto'>
         <h1 class='txt-subhead mb6'>Labor Migration from Malawi to South Africa and Zimbabwe: 1904-1950</h1>
@@ -181,6 +192,9 @@
       <!-- keeps map from jarring -->
       <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
 
+      <!-- google translate element -->
+      <div id="google_translate_element"></div>
+
     </div>
   </div>
 
@@ -190,12 +204,18 @@
   <script src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <script src="./data/southern_africa_ethnicity_murdock_1959.js"></script>
   <script src="./data/SouthAfrica_migration.js"></script>
   <script src="./data/Zimbabwe_migration.js"></script>
 
   <!-- begin javascript -->
   <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en'},
+    'google_translate_element');
+    }
+
     var map = L.map('map', {
       center: [-20.00, 30.00], // You can hardcode the center of the map on specific coordinates
       zoom: 6 // You can hardcode the initial zoom level
