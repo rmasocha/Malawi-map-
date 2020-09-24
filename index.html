@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/leaflet.extra-markers.min.css">
 
   <style>
+
     h1 {
       font-family: 'Montserrat', sans-serif;
       font-size: 20px;
@@ -56,8 +57,9 @@
     }
 
     #scroll {
-      background-image: url(images/fresh_snow.png);
       /* add subtle pattern to background from (https://www.toptal.com/designers/subtlepatterns/fresh-snow/) */
+      background-image: url(images/fresh_snow.png);
+      padding-left: 5px;
     }
 
     /* Set time slider styles */
@@ -136,8 +138,8 @@
 </head>
 
 <body>
-  <div class='grid h180'>
-    <div class='col col--12 col--3-ml p12 pb6 viewport-third viewport-full-ml'>
+  <div class='grid h-auto'>
+    <div class='col col--12 col--3-ml viewport-full-ml'>
       <div id='scroll' class='h-full scroll-auto'>
         <h1 class='txt-subhead mb6'>Labor Migration from Malawi to South Africa and Zimbabwe: 1904-1950</h1>
         <h5>This map presents the labor migration flow for migrants from Malawi going to work in South Africa and Zimbabwe between the years 1904 and 1950. The map visualizes numerous factors intersecting together in shaping migration patterns and
@@ -174,8 +176,8 @@
       </div>
       <!-- end scroll bar -->
     </div>
-    <div class='col col--12 col--9-ml h180 h-full-ml'>
-      <div id="map" class='viewport-twothirds viewport-full-ml'></div>
+    <div class='col col--12 col--9-ml h-auto-ml'>
+      <div id="map" class='viewport-full-ml'></div>
 
       <!-- ui slider -->
       <div id='slider' class='range w240 bg-white border border--gray-light round-ml p12'>
@@ -197,7 +199,7 @@
       <!-- end end arrow buttons -->
 
       <!-- keeps map from jarring -->
-      <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+      <div id="container" style="min-width: 0px; height: 0px; max-width: 0px; margin: 0 auto"></div>
 
       <!-- google translate element -->
       <div id="google_translate_element"></div>
